@@ -183,6 +183,6 @@ tar -xzf sing-box-backup.tar.gz -C /
 
 如果问题仍然存在：
 
-1. 查看 [GitHub Issues](https://github.com/YOUR_USERNAME/sing-box-deploy/issues)
+1. 查看 [GitHub Issues](https://github.com/johnsmith8736/sing-box-deploy/issues)
 2. 提交新的 Issue
 3. 加入社区讨论组获取帮助 

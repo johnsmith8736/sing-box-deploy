@@ -22,7 +22,7 @@
 
 1. 下载脚本：
 ```bash
-wget https://raw.githubusercontent.com/YOUR_USERNAME/sing-box-deploy/main/deploy-singbox.sh
+wget https://raw.githubusercontent.com/johnsmith8736/sing-box-deploy/main/deploy-singbox.sh
 ```
 
 2. 添加执行权限：

@@ -26,7 +26,7 @@
 ### 1. 下载安装脚本
 
 ```bash
-wget https://raw.githubusercontent.com/YOUR_USERNAME/sing-box-deploy/main/deploy-singbox.sh
+wget https://raw.githubusercontent.com/johnsmith8736/sing-box-deploy/main/deploy-singbox.sh
 chmod +x deploy-singbox.sh
 ```
 
