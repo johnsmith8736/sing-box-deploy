@@ -356,16 +356,51 @@ download_and_install() {
 
 # 生成随机参数
 generate_params() {
+    # 检查 uuid
+    if ! command -v uuid >/dev/null 2>&1; then
+        red "uuid 命令未安装，请先安装 uuid-runtime (Debian/Ubuntu) 或 uuid (CentOS/Arch)"
+        exit 1
+    fi
     UUID=$(uuid)
-    KEY_PAIR=$(${BINARY_DIR}/sing-box generate reality-keypair)
+    if [ -z "$UUID" ]; then
+        red "生成 UUID 失败，请检查 uuid 命令"
+        exit 1
+    fi
+
+    # 检查 sing-box
+    if [ ! -x "${BINARY_DIR}/sing-box" ]; then
+        red "${BINARY_DIR}/sing-box 不存在或不可执行，请检查 sing-box 是否正确安装"
+        exit 1
+    fi
+    KEY_PAIR=$(${BINARY_DIR}/sing-box generate reality-keypair 2>/tmp/sb_keypair_err)
+    if [ $? -ne 0 ] || [ -z "$KEY_PAIR" ]; then
+        red "sing-box reality-keypair 生成失败，错误信息如下："
+        cat /tmp/sb_keypair_err
+        exit 1
+    fi
     PRIVATE_KEY=$(echo "$KEY_PAIR" | grep "Private key:" | awk '{print $3}')
     PUBLIC_KEY=$(echo "$KEY_PAIR" | grep "Public key:" | awk '{print $3}')
+    if [ -z "$PRIVATE_KEY" ] || [ -z "$PUBLIC_KEY" ]; then
+        red "解析 reality-keypair 失败，输出内容："
+        echo "$KEY_PAIR"
+        exit 1
+    fi
+
+    # 检查 openssl
+    if ! command -v openssl >/dev/null 2>&1; then
+        red "openssl 未安装，请先安装 openssl"
+        exit 1
+    fi
     SHORT_ID=$(openssl rand -hex 8)
+    if [ -z "$SHORT_ID" ]; then
+        red "生成 SHORT_ID 失败，请检查 openssl 命令"
+        exit 1
+    fi
+
+    # 检查 get_ip
     SERVER_IP=$(get_ip)
-    
-    # 验证参数
-    if [ -z "$UUID" ] || [ -z "$PRIVATE_KEY" ] || [ -z "$PUBLIC_KEY" ] || [ -z "$SHORT_ID" ] || [ -z "$SERVER_IP" ]; then
-        red "生成配置参数失败"
+    if [ -z "$SERVER_IP" ]; then
+        red "获取服务器公网 IP 失败，请检查网络连接"
         exit 1
     fi
 }
