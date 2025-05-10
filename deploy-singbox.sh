@@ -69,20 +69,33 @@ check_system_resources() {
     
     # 检查内存
     local total_mem=$(free -m | awk '/^Mem:/{print $2}')
-    if [ $total_mem -lt 512 ]; then
+    if [ -n "$total_mem" ] && [ "$total_mem" -lt 512 ]; then
         yellow "警告: 系统内存小于512MB，可能会影响性能"
     fi
     
     # 检查磁盘空间
-    local free_space=$(df -m ${WORK_DIR} | awk 'NR==2 {print $4}')
-    if [ $free_space -lt 100 ]; then
+    local check_dir="${WORK_DIR:-/etc/sing-box}"
+    if [ ! -d "$check_dir" ]; then
+        check_dir="/"
+    fi
+    local free_space=$(df -m "$check_dir" 2>/dev/null | awk 'NR==2 {print $4}')
+    if [ -z "$free_space" ]; then
+        free_space=0
+    fi
+    if [ "$free_space" -lt 100 ]; then
         red "错误: 可用磁盘空间不足100MB"
+        exit 1
+    fi
+    
+    # 检查 bc 是否安装
+    if ! command -v bc >/dev/null 2>&1; then
+        red "缺少 bc 工具，请先安装 bc (Debian/Ubuntu: apt install -y bc, CentOS: yum install -y bc)"
         exit 1
     fi
     
     # 检查系统负载
     local load=$(uptime | awk -F'load average:' '{print $2}' | awk -F',' '{print $1}')
-    if [ $(echo "$load > 2" | bc -l) -eq 1 ]; then
+    if [ -n "$load" ] && [ $(echo "$load > 2" | bc -l) -eq 1 ]; then
         yellow "警告: 系统负载较高: $load"
     fi
 }
