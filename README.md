@@ -20,18 +20,15 @@
 
 ## 快速开始
 
-1. 下载脚本：
+1. 一键安装/更新（推荐）：
+```bash
+bash <(curl -Ls https://raw.githubusercontent.com/johnsmith8736/sing-box-deploy/main/deploy-singbox.sh)
+```
+
+2. 传统方式：
 ```bash
 wget https://raw.githubusercontent.com/johnsmith8736/sing-box-deploy/main/deploy-singbox.sh
-```
-
-2. 添加执行权限：
-```bash
 chmod +x deploy-singbox.sh
-```
-
-3. 运行脚本：
-```bash
 ./deploy-singbox.sh
 ```
 
