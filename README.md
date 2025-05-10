@@ -1,57 +1,38 @@
-# Sing-Box 自动部署脚本
+# sing-box 一键自动化安装脚本
 
-这是一个用于自动部署和管理 Sing-Box 的 Bash 脚本。该脚本提供了简单的命令行界面，可以轻松地安装、配置和管理 Sing-Box 服务。
-
-## 功能特点
-
-- 自动检测系统环境和依赖
-- 支持多种 CPU 架构 (x86_64, aarch64, armv7)
-- 自动安装必要的依赖包
-- 完整的错误处理和日志记录
-- 支持服务状态管理
-- 智能的网络环境检测
-
-## 系统要求
-
-- 支持的操作系统：Ubuntu、Debian、CentOS
-- 需要 root 权限
-- 最小内存要求：512MB
-- 最小磁盘空间：100MB
-
-## 快速开始
-
-1. 一键安装/更新（推荐）：
-```bash
-bash <(curl -Ls https://raw.githubusercontent.com/johnsmith8736/sing-box-deploy/main/deploy-singbox.sh)
-```
-
-2. 传统方式：
-```bash
-wget https://raw.githubusercontent.com/johnsmith8736/sing-box-deploy/main/deploy-singbox.sh
-chmod +x deploy-singbox.sh
-./deploy-singbox.sh
-```
-
-## 使用方法
+## 一键安装/配置/升级
 
 ```bash
-./deploy-singbox.sh [命令]
+bash <(curl -fsSL https://raw.githubusercontent.com/johnsmith8736/sing-box/main/deploy-singbox.sh)
 ```
 
-可用命令：
-- 无参数     - 安装或更新 sing-box
-- status     - 查看服务状态
-- restart    - 重启服务
-- uninstall  - 卸载 sing-box
-
-## 卸载 sing-box
-
-如需卸载 sing-box 及其所有配置和服务，请运行：
+## 一键卸载
 
 ```bash
-./deploy-singbox.sh uninstall
+bash <(curl -fsSL https://raw.githubusercontent.com/johnsmith8736/sing-box/main/deploy-singbox.sh) uninstall
 ```
 
-## 配置文件位置
+## 其他命令
+- 查看状态：`./deploy-singbox.sh status`
+- 重启服务：`./deploy-singbox.sh restart`
+- 卸载：`./deploy-singbox.sh uninstall`
 
-- 配置文件：`
+---
+
+## 脚本主要特性
+- 一条命令全自动完成 sing-box 的安装、配置、升级、卸载
+- 自动检测并安装依赖（bc, jq, curl, dnsutils, openssl 等）
+- 自动修复 DNS 问题，保障网络连通
+- 自动下载并安装 sing-box 最新 1.11.x 版本
+- 自动生成配置参数（UUID、Reality Key、WARP 等）
+- 自动解析 WARP 配置，兼容多种格式
+- 详细报错和友好提示，自动备份配置和日志
+- 支持 systemd 服务管理，自动生成客户端配置信息
+
+## 常见问题与排查建议
+- 如遇依赖安装失败，请根据提示手动安装相关依赖
+- 如遇 DNS 解析失败，脚本会自动修复 /etc/resolv.conf，若仍失败请检查服务器网络和防火墙
+- 如遇端口占用、服务启动失败等，脚本会有详细报错并给出排查建议
+- 如遇网络限制（如云厂商封锁 53/443 端口），请联系服务器提供商或检查安全组/防火墙
+
+> 脚本和文档持续更新，欢迎反馈和贡献！
