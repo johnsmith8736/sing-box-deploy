@@ -416,19 +416,24 @@ get_warp_config() {
     while [ $retry_count -lt $max_retries ] && [ $success = false ]; do
         if curl -sLo warp-reg.sh warp-reg.vercel.app; then
             if bash warp-reg.sh > warp-reg.log 2>&1; then
-                # 从日志中提取配置信息
-                if [ -f "warp-reg.log" ]; then
+                # 优先用 jq 解析 JSON 格式
+                if command -v jq >/dev/null 2>&1 && jq -e . warp-reg.log >/dev/null 2>&1; then
+                    PRIVATE_KEY_WARP=$(jq -r '.private_key' warp-reg.log)
+                    WARP_ADDRESS_V4=$(jq -r '.v4' warp-reg.log)
+                    WARP_ADDRESS_V6=$(jq -r '.v6' warp-reg.log)
+                    WARP_RESERVED=$(jq -c '.reserved_dec' warp-reg.log)
+                else
+                    # 兼容旧文本格式
                     PRIVATE_KEY_WARP=$(grep "private_key" warp-reg.log | awk -F"[()]" '{print $2}')
                     WARP_ADDRESS_V4=$(grep "v4" warp-reg.log | awk -F"[()]" '{print $2}' | head -n 1)
                     WARP_ADDRESS_V6=$(grep "v6" warp-reg.log | awk -F"[()]" '{print $2}' | head -n 1)
                     WARP_RESERVED=$(grep "reserved" warp-reg.log | awk -F"[()]" '{print $2}')
-                    
-                    # 验证必要的配置信息是否获取成功
-                    if [ -n "$PRIVATE_KEY_WARP" ] && [ -n "$WARP_ADDRESS_V4" ] && [ -n "$WARP_RESERVED" ]; then
-                        success=true
-                        green "WARP配置信息获取成功！"
-                        break
-                    fi
+                fi
+                # 验证必要的配置信息是否获取成功
+                if [ -n "$PRIVATE_KEY_WARP" ] && [ -n "$WARP_ADDRESS_V4" ] && [ -n "$WARP_RESERVED" ]; then
+                    success=true
+                    green "WARP配置信息获取成功！"
+                    break
                 fi
             fi
         fi
@@ -445,6 +450,9 @@ get_warp_config() {
         if [ -f "warp-reg.log" ]; then
             red "错误日志："
             cat warp-reg.log
+            if ! command -v jq >/dev/null 2>&1; then
+                red "建议安装 jq 工具以支持 JSON 解析 (Debian/Ubuntu: apt install -y jq, CentOS: yum install -y jq)"
+            fi
         fi
         cleanup
         exit 1
