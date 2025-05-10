@@ -378,8 +378,8 @@ generate_params() {
         cat /tmp/sb_keypair_err
         exit 1
     fi
-    PRIVATE_KEY=$(echo "$KEY_PAIR" | grep -E "PrivateKey:|Private key:" | awk -F': ' '{print $2}')
-    PUBLIC_KEY=$(echo "$KEY_PAIR" | grep -E "PublicKey:|Public key:" | awk -F': ' '{print $2}')
+    PRIVATE_KEY=$(echo "$KEY_PAIR" | grep -E "PrivateKey:|Private key:" | sed 's/.*:[[:space:]]*//')
+    PUBLIC_KEY=$(echo "$KEY_PAIR" | grep -E "PublicKey:|Public key:" | sed 's/.*:[[:space:]]*//')
     if [ -z "$PRIVATE_KEY" ] || [ -z "$PUBLIC_KEY" ]; then
         red "解析 reality-keypair 失败，输出内容："
         echo "$KEY_PAIR"
