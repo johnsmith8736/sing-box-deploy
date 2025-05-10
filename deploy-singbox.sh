@@ -108,8 +108,25 @@ check_network() {
     local dns_retry=0
     while ! nslookup github.com >/dev/null 2>&1; do
         dns_retry=$((dns_retry + 1))
+        if [ $dns_retry -eq 2 ]; then
+            yellow "尝试自动修复 DNS 配置..."
+            # 处理 /etc/resolv.conf 可能为符号链接的情况
+            if [ -L /etc/resolv.conf ]; then
+                sudo rm -f /etc/resolv.conf
+                sudo touch /etc/resolv.conf
+            fi
+            # 解除保护
+            sudo chattr -i /etc/resolv.conf 2>/dev/null
+            echo -e "nameserver 8.8.8.8\nnameserver 1.1.1.1" | sudo tee /etc/resolv.conf
+            # 加保护防止被DHCP覆盖
+            sudo chattr +i /etc/resolv.conf 2>/dev/null
+            sleep 1
+        fi
         if [ $dns_retry -ge 3 ]; then
-            red "DNS解析失败，请检查系统DNS配置"
+            red "DNS解析失败，请检查系统DNS配置。当前 /etc/resolv.conf 内容如下："
+            cat /etc/resolv.conf
+            red "你可以尝试手动执行："
+            echo "sudo chattr -i /etc/resolv.conf && echo -e 'nameserver 8.8.8.8\\nnameserver 1.1.1.1' | sudo tee /etc/resolv.conf && sudo chattr +i /etc/resolv.conf"
             exit 1
         fi
         yellow "DNS解析重试 $dns_retry/3..."
