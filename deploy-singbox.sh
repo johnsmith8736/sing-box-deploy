@@ -421,9 +421,8 @@ get_warp_config() {
                     PRIVATE_KEY_WARP=$(jq -r '.private_key' warp-reg.log)
                     WARP_ADDRESS_V4=$(jq -r '.v4' warp-reg.log)
                     WARP_ADDRESS_V6=$(jq -r '.v6' warp-reg.log)
-                    # reserved 字段优先用 reserved_hex
-                    WARP_RESERVED=$(jq -r '.reserved_hex' warp-reg.log)
-                    # 如需数组格式可用: WARP_RESERVED_ARRAY=$(jq -c '.reserved_dec' warp-reg.log)
+                    # reserved 字段用 reserved_dec（数组格式）
+                    WARP_RESERVED=$(jq -c '.reserved_dec' warp-reg.log)
                 else
                     # 兼容旧文本格式
                     PRIVATE_KEY_WARP=$(grep "private_key" warp-reg.log | awk -F"[()]" '{print $2}')
