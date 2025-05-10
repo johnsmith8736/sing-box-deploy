@@ -44,25 +44,14 @@ chmod +x deploy-singbox.sh
 - restart    - 重启服务
 - uninstall  - 卸载 sing-box
 
+## 卸载 sing-box
+
+如需卸载 sing-box 及其所有配置和服务，请运行：
+
+```bash
+./deploy-singbox.sh uninstall
+```
+
 ## 配置文件位置
 
-- 配置文件：`/etc/sing-box/config.json`
-- 日志文件：`/var/log/sing-box.log`
-
-## 详细文档
-
-- [安装指南](docs/installation.md)
-- [配置指南](docs/configuration.md)
-- [故障排除](docs/troubleshooting.md)
-
-## 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-## 许可证
-
-MIT License
-
-## 免责声明
-
-本项目仅供学习和研究使用，请遵守当地法律法规。作者不对使用本脚本导致的任何问题负责。 
+- 配置文件：`
