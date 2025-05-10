@@ -87,12 +87,6 @@ check_system_resources() {
         exit 1
     fi
     
-    # 检查 bc 是否安装
-    if ! command -v bc >/dev/null 2>&1; then
-        red "缺少 bc 工具，请先安装 bc (Debian/Ubuntu: apt install -y bc, CentOS: yum install -y bc)"
-        exit 1
-    fi
-    
     # 检查系统负载
     local load=$(uptime | awk -F'load average:' '{print $2}' | awk -F',' '{print $1}')
     if [ -n "$load" ] && [ $(echo "$load > 2" | bc -l) -eq 1 ]; then
@@ -241,6 +235,26 @@ BINARY_DIR="/usr/local/bin"
 
 # 检查依赖
 check_dependencies() {
+    # 优先自动安装 bc
+    if ! command -v bc >/dev/null 2>&1; then
+        yellow "自动安装 bc 工具..."
+        if command -v apt >/dev/null 2>&1; then
+            apt update && apt install -y bc
+        elif command -v yum >/dev/null 2>&1; then
+            yum install -y bc
+        elif command -v pacman >/dev/null 2>&1; then
+            pacman -Sy --noconfirm bc
+        else
+            red "缺少 bc 工具，请手动安装 bc (Debian/Ubuntu: apt install -y bc, CentOS: yum install -y bc, Arch: pacman -Sy bc)"
+            exit 1
+        fi
+    fi
+    # 再次检测 bc
+    if ! command -v bc >/dev/null 2>&1; then
+        red "自动安装 bc 失败，请手动安装 bc 后重试"
+        exit 1
+    fi
+
     local dependencies=(
         "wget"
         "curl"
@@ -250,7 +264,6 @@ check_dependencies() {
         "uuid"
         "netstat"
         "iptables"
-        "bc"
         "nslookup"
         "systemd"
     )
