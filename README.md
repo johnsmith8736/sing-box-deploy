@@ -9,7 +9,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/johnsmith8736/sing-box/main/
 ## 一键卸载
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/johnsmith8736/sing-box/main/deploy-singbox.sh) uninstall
+bash <(curl -fsSL https://raw.githubusercontent.com/johnsmith8736/sing-box-deploy/main/deploy-singbox.sh) uninstall
 ```
 
 ## 其他命令
