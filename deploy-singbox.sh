@@ -254,6 +254,25 @@ check_dependencies() {
         exit 1
     fi
 
+    # 自动检测并安装 dnsutils
+    if ! command -v nslookup >/dev/null 2>&1; then
+        echo "自动安装 dnsutils..."
+        if command -v apt >/dev/null 2>&1; then
+            apt update && apt install -y dnsutils
+        elif command -v yum >/dev/null 2>&1; then
+            yum install -y bind-utils
+        elif command -v pacman >/dev/null 2>&1; then
+            pacman -Sy --noconfirm bind
+        else
+            echo "缺少 dnsutils 工具，请手动安装 (Debian/Ubuntu: apt install -y dnsutils, CentOS: yum install -y bind-utils, Arch: pacman -Sy bind)"
+            exit 1
+        fi
+    fi
+    if ! command -v nslookup >/dev/null 2>&1; then
+        echo "自动安装 dnsutils 失败，请手动安装 dnsutils 后重试"
+        exit 1
+    fi
+
     local dependencies=(
         "wget"
         "curl"
