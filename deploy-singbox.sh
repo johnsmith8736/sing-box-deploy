@@ -222,8 +222,20 @@ case $(uname -m) in
         ;;
 esac
 
+# 获取最新 1.11.x 版本号
+get_latest_1_11_x_version() {
+    curl -s https://api.github.com/repos/SagerNet/sing-box/releases \
+    | grep -o '"tag_name": *"v1\.11\.[0-9]\+"' \
+    | grep -o '1.11.[0-9]\+' \
+    | sort -V \
+    | tail -n 1
+}
+
 # 设置变量
-SING_BOX_VERSION="1.11.0"
+SING_BOX_VERSION="$(get_latest_1_11_x_version)"
+if [ -z "$SING_BOX_VERSION" ]; then
+    SING_BOX_VERSION="1.11.0" # 兜底
+fi
 WORK_DIR="/etc/sing-box"
 BINARY_DIR="/usr/local/bin"
 
