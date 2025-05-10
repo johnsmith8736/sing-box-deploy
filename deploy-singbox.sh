@@ -1157,14 +1157,6 @@ backup_config() {
         else
             red "配置文件备份失败"
         fi
-    else
-            green "配置文件已备份到: $backup_file"
-            
-            # 清理旧备份，只保留最近5个
-            ls -t "${backup_dir}"/config_*.json 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null
-        else
-            yellow "配置文件备份失败"
-        fi
     fi
 }
 
