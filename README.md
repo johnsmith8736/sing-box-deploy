@@ -3,7 +3,7 @@
 ## 一键安装/配置/升级
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/johnsmith8736/sing-box/main/deploy-singbox.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/johnsmith8736/sing-box-deploy/main/deploy-singbox.sh)
 ```
 
 ## 一键卸载
